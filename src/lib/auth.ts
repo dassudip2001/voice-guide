@@ -43,7 +43,8 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user._id.toString(),
             role: user.role,
-            name: user.email,
+            name: user.name,
+            email: user.email,
           };
         } catch (error) {
           console.error("Auth Error", error);
@@ -56,7 +57,8 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.name = user.email;
+        token.name = user.name;
+        token.email = user.email;
       }
       return token;
     },
@@ -65,6 +67,8 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.role = token.role as string;
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
       }
       return session;
     },

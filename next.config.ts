@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
         return [
           {
             source: '/',
-            destination: '/login',
+            destination: '/dashboard',
             permanent: true, // or false for temporary redirect
           },
         ];
