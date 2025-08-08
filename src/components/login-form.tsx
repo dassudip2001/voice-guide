@@ -1,14 +1,55 @@
+"use client"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react"
+import { signIn } from "next-auth/react";
+import { toast } from "sonner"
+export type LoginRequestT={
+  email: string;
+  password: string;
+  redirect: boolean;
+}
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+
+  const router=useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  }= useForm<LoginRequestT>();
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit: SubmitHandler<LoginRequestT> = async (data) => {
+    setLoading(true);
+    await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    }).then((result) => {
+      if (result?.error) {
+        // Handle error, e.g., show notification
+        console.error(result.error);
+        toast.error("Login failed: " + result.error);
+        setLoading(false);
+      } else {
+        // Handle successful login, e.g., redirect
+        console.log("Login successful");
+        toast("Login successful");
+        router.push("/dashboard");
+        setLoading(false);
+      }
+    });
+  };
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -18,7 +59,7 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" type="email" placeholder="m@example.com" {...register("email",{required:true})} />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -30,9 +71,9 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" placeholder="•••••" required />
+          <Input id="password" type="password" placeholder="•••••" {...register("password",{required:true})} />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
           Login
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
