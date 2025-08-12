@@ -4,14 +4,10 @@ import * as React from "react"
 import {
   Command,
   Frame,
-  LifeBuoy,
   Map,
-  PieChart,
-  Send,
 } from "lucide-react"
 
 import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -30,32 +26,16 @@ const data = {
     avatar: "/avatars/shadcn.jpg",
   },
   
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
+  
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
+      name: "Dashboard",
+      url: "/dashboard",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
+      name: "Qr",
+      url: "/qr",
       icon: Map,
     },
   ],
@@ -83,7 +63,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
