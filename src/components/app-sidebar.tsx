@@ -5,6 +5,7 @@ import {
   Command,
   Frame,
   Map,
+  Settings,
 } from "lucide-react"
 
 import { NavProjects } from "@/components/nav-projects"
@@ -32,12 +33,17 @@ const data = {
       name: "Dashboard",
       url: "/dashboard",
       icon: Frame,
+    },{
+      name: "category",
+      url: "/category",
+      icon: Settings,
     },
     {
       name: "Qr",
       url: "/qr",
       icon: Map,
     },
+
   ],
 }
 
