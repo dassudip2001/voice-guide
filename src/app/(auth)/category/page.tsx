@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Table,
   TableBody,
@@ -7,52 +7,48 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  CardContent,
-} from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { RoleEnum } from "@/schema/userSchema";
-import { useState } from "react";
-import { AddEditCategory, CategoryAction } from "@/components/category/AddEditCategory";
-
-const qrData = [
-  {
-    id: "QR001",
-    name: "Website Link",
-    created: "2024-01-15",
-    status: "Active",
-  },
-  {
-    id: "QR002",
-    name: "Contact Card",
-    created: "2024-01-20",
-    status: "Active",
-  },
-  {
-    id: "QR003",
-    name: "WiFi Access",
-    created: "2024-01-25",
-    status: "Inactive",
-  },
-  {
-    id: "QR004",
-    name: "Event Info",
-    created: "2024-02-01",
-    status: "Active",
-  },
-  {
-    id: "QR005",
-    name: "App Download",
-    created: "2024-02-05",
-    status: "Active",
-  },
-];
+import { useEffect, useState } from "react";
+import {
+  AddEditCategory,
+  CategoryAction,
+} from "@/components/category/AddEditCategory";
+import { toast } from "sonner";
+import { IReadCategory } from "@/schema/categorySchema";
+import axios from "axios";
 
 export default function Category() {
-
   const { data: session } = useSession();
   const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [category, setCategories] = useState<IReadCategory[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await axios.get("/api/category");
+        setCategories(response.data.data as IReadCategory[]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setLoading(false);
+        toast("Failed to fetch categories.");
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -61,12 +57,13 @@ export default function Category() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
             <p className="text-muted-foreground">
-              Manage your categories here. You can add, edit, or delete categories as needed.
+              Manage your categories here. You can add, edit, or delete
+              categories as needed.
             </p>
           </div>
           {/* check if user is superadmin */}
           {session?.user?.role === RoleEnum.superadmin && (
-            <Button onClick={() => setIsOpenCategory(true)} >Create New</Button>
+            <Button onClick={() => setIsOpenCategory(true)}>Create New</Button>
           )}
         </div>
         <CardContent>
@@ -80,11 +77,11 @@ export default function Category() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {qrData.map((qr) => (
-                <TableRow key={qr.id}>
-                  <TableCell className="font-medium">{qr.id}</TableCell>
+              {category?.map((qr) => (
+                <TableRow key={qr._id}>
+                  <TableCell className="font-medium">{qr._id}</TableCell>
                   <TableCell>{qr.name}</TableCell>
-                  <TableCell>{qr.created}</TableCell>
+                  <TableCell>{qr.createdAt as unknown as string}</TableCell>
 
                   <TableCell className="text-right">
                     {/* check if user is superadmin */}
@@ -93,7 +90,7 @@ export default function Category() {
                         Edit
                       </Button>
                       <Button variant="outline" size="sm">
-                        View
+                        Delete
                       </Button>
                     </div>
                   </TableCell>
@@ -105,7 +102,11 @@ export default function Category() {
       </div>
       {/* Modal for creating new category */}
       {isOpenCategory && (
-        <AddEditCategory isOpenCategory={isOpenCategory} setIsOpenCategory={setIsOpenCategory} action={CategoryAction.ADD} />
+        <AddEditCategory
+          isOpenCategory={isOpenCategory}
+          setIsOpenCategory={setIsOpenCategory}
+          action={CategoryAction.ADD}
+        />
       )}
     </>
   );

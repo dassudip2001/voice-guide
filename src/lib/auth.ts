@@ -25,7 +25,6 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
-
         try {
           await connectToDatabase();
           const user = await User.findOne({ email: credentials.email });
@@ -39,7 +38,6 @@ export const authOptions: NextAuthOptions = {
           if (!valid) {
             throw new Error("Invalid credentials");
           }
-
           return {
             id: user._id.toString(),
             role: user.role,
@@ -57,14 +55,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.name = user.name;
-        token.email = user.email;
+        token.name = user.name!;
+        token.email = user.email!;
+        token.id = user.id;
       }
       return token;
     },
-
     async session({ session, token }) {
-      if (session.user) {
+      if (session.user && token) {
         session.user.role = token.role as string;
         session.user.id = token.id as string;
         session.user.name = token.name as string;
@@ -84,3 +82,28 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+// Type declarations
+import { DefaultSession } from "next-auth";
+declare module "next-auth" {
+  interface Session {
+    user: {
+      role: string;
+      name: string;
+      email: string;
+      id: string;
+    } & DefaultSession["user"];
+  }
+  interface User {
+    role: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: string;
+    name: string;
+    email: string;
+  }
+}
