@@ -19,12 +19,19 @@ import {
 import { toast } from "sonner";
 import { IReadCategory } from "@/schema/categorySchema";
 import axios from "axios";
+import Loading from "@/components/common/loading";
+import DeleteModel from "@/components/common/DeleteModel";
 
 export default function Category() {
   const { data: session } = useSession();
   const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [category, setCategories] = useState<IReadCategory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<IReadCategory | null>(null);
+  const [action, setAction] = useState<CategoryAction>(CategoryAction.ADD);
+  const [reloadCategory, setIsReloadCategory] = useState<boolean>(true);
+  const [selectCategoryId, setSelectcategoryId] = useState<string | null>(null);
+  const [isOpenDeleteCategoryModel, setIsOpenCategoryModel] = useState<boolean>(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -40,14 +47,10 @@ export default function Category() {
       }
     }
     fetchData();
-  }, []);
+  }, [reloadCategory]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    <Loading />
   }
 
   return (
@@ -63,14 +66,19 @@ export default function Category() {
           </div>
           {/* check if user is superadmin */}
           {session?.user?.role === RoleEnum.superadmin && (
-            <Button onClick={() => setIsOpenCategory(true)}>Create New</Button>
+            <Button onClick={() => {
+              setSelectedCategory(null); // reset
+              setAction(CategoryAction.ADD);
+              setIsOpenCategory(true)
+            }
+            }>Create New</Button>
           )}
         </div>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
+                {/* <TableHead className="w-[100px]">ID</TableHead> */}
                 <TableHead>Name</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -79,17 +87,25 @@ export default function Category() {
             <TableBody>
               {category?.map((qr) => (
                 <TableRow key={qr._id}>
-                  <TableCell className="font-medium">{qr._id}</TableCell>
+                  {/* <TableCell className="font-medium">{qr._id}</TableCell> */}
                   <TableCell>{qr.name}</TableCell>
                   <TableCell>{qr.createdAt as unknown as string}</TableCell>
 
                   <TableCell className="text-right">
                     {/* check if user is superadmin */}
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => {
+                        setSelectedCategory(qr);
+                        setAction(CategoryAction.EDIT);
+                        setIsOpenCategory(true);
+                      }}>
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => {
+                        setSelectcategoryId(qr?._id);
+                        console.log(selectCategoryId);
+                        setIsOpenCategoryModel(true)
+                      }}>
                         Delete
                       </Button>
                     </div>
@@ -105,9 +121,16 @@ export default function Category() {
         <AddEditCategory
           isOpenCategory={isOpenCategory}
           setIsOpenCategory={setIsOpenCategory}
-          action={CategoryAction.ADD}
+          action={action}
+          onReload={() => setIsReloadCategory((prev) => !prev)}
+          category={selectedCategory || undefined}
         />
       )}
+      {/* Delete model */}
+      {isOpenDeleteCategoryModel && (
+        <DeleteModel recordId={selectCategoryId!} open={setIsOpenCategoryModel} isOpenDelete={isOpenDeleteCategoryModel} modelName="Category" />
+      )}
+
     </>
   );
 }

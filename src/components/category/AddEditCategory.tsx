@@ -12,9 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "../ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { IWriteCategory } from "@/schema/categorySchema";
+import { IReadCategory, IWriteCategory } from "@/schema/categorySchema";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -27,35 +27,51 @@ export function AddEditCategory({
   isOpenCategory,
   setIsOpenCategory,
   action = CategoryAction.ADD,
+  category,
+  onReload
 }: {
   isOpenCategory: boolean;
   setIsOpenCategory: (isOpen: boolean) => void;
   action?: CategoryAction;
+  category?: IReadCategory
+  onReload?: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IWriteCategory>();
+
+
+  useEffect(() => {
+    if (action === CategoryAction.EDIT && category) {
+      reset({
+        name: category.name,
+        description: category.description || "",
+      });
+    } else {
+      reset({ name: "", description: "" });
+    }
+  }, [action, category, reset]);
+
   const onSubmit: SubmitHandler<IWriteCategory> = async (data) => {
     setLoading(true);
     try {
-      if (action === CategoryAction.EDIT) {
-        console.log("Editing category with data:", data);
-
-        // Handle edit logic here
-        // For example, you might need to pass an ID to update the specific category
+      if (action === CategoryAction.EDIT && category?._id) {
+        await axios.put(`/api/category/${category._id}`, data);
+        toast.success("Category updated successfully!");
       } else {
-        const response = await axios.post("/api/category", data);
-        if (response.status === 200) {
-          toast(`${action} category successfully!`);
-          setIsOpenCategory(false);
-        }
+        await axios.post("/api/category", data);
+        toast.success("Category added successfully!");
       }
+      setIsOpenCategory(false);
+      onReload?.();
     } catch (error) {
-      console.log("Error submitting form:", error);
+      console.error("Error submitting form:", error);
       toast.error(`Failed to ${action.toLowerCase()} category.`);
+    } finally {
       setLoading(false);
     }
   };
