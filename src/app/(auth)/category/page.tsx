@@ -128,7 +128,11 @@ export default function Category() {
       )}
       {/* Delete model */}
       {isOpenDeleteCategoryModel && (
-        <DeleteModel recordId={selectCategoryId!} open={setIsOpenCategoryModel} isOpenDelete={isOpenDeleteCategoryModel} modelName="Category" />
+        <DeleteModel recordId={selectCategoryId!} 
+        open={setIsOpenCategoryModel} 
+        isOpenDelete={isOpenDeleteCategoryModel}
+        onReload={() => setIsReloadCategory((prev) => !prev)}
+         modelName="Category" />
       )}
 
     </>
