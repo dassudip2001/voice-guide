@@ -112,6 +112,13 @@ export default function Category() {
                   </TableCell>
                 </TableRow>
               ))}
+              {category.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    No categories found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
