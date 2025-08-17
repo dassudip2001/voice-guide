@@ -42,7 +42,7 @@ const data = {
     },
     {
       name: "Post",
-      url: "/qr",
+      url: "/posts",
       icon: Map,
     },
     {

@@ -1,0 +1,34 @@
+import { authOptions } from "@/lib/auth";
+import { connectToDatabase } from "@/lib/db";
+import Post from "@/models/Post";
+import { getServerSession } from "next-auth/next";
+import { NextRequest, NextResponse } from "next/server";
+
+// GET /api/posts/[id]
+export async function GET(
+    request: NextRequest,
+    props: { params: Promise<{ id: string }> }
+) {
+    try {
+        const { id } = await props.params;
+        await connectToDatabase();
+        const session = await getServerSession(authOptions);
+        if (!session?.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const post = await Post.findOne({ _id: id });
+        if (!post) {
+            return NextResponse.json(
+                { error: "post not found" },
+                { status: 404 }
+            );
+        }
+        return NextResponse.json({ post }, { status: 200 });
+    } catch (error) {
+        console.error("Error fetching post:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch post" },
+            { status: 500 }
+        );
+    }
+}
