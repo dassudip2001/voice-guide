@@ -11,9 +11,6 @@ export async function GET() {
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    console.log("Session User:", session.user);
-
     // connect to the database
     await connectToDatabase();
 

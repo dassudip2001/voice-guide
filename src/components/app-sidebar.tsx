@@ -2,10 +2,12 @@
 
 import * as React from "react"
 import {
+  CircleArrowOutDownLeft,
   Command,
   Frame,
   Map,
   Settings,
+  User,
 } from "lucide-react"
 
 import { NavProjects } from "@/components/nav-projects"
@@ -39,10 +41,20 @@ const data = {
       icon: Settings,
     },
     {
-      name: "Qr",
+      name: "Post",
       url: "/qr",
       icon: Map,
     },
+    {
+      name: "Artist",
+      url: "/artist",
+      icon: CircleArrowOutDownLeft,
+    },
+    {
+      name:"User",
+      url: "/user",
+      icon: User,
+    }
 
   ],
 }
