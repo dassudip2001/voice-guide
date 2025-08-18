@@ -39,6 +39,9 @@ export default function DeleteModel({
       if (modelName === "Category") {
         await axios.delete(`/api/category/${recordId}`);
       }
+      if (modelName === "User") {
+        await axios.delete(`/api/user/${recordId}`);
+      }
       toast.success(`${modelName} deleted successfully`);
       onReload?.();
       open(false);
