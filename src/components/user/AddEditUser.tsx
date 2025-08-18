@@ -17,7 +17,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Role } from "@/types/roleType";
 
 export default function AddEditUser({
   isOpenUser,
@@ -112,13 +111,22 @@ export default function AddEditUser({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="role">Role</Label>
-                <Select>
+                <Select
+                  onValueChange={(value) => {
+                    register("role").onChange({
+                      target: { name: "role", value: value as RoleEnum }
+                    });
+                  }}
+                  defaultValue={user?.role || RoleEnum.user}
+                >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Role" />
+                    <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Role.map((role)=>(
-                    <SelectItem value={role.name}>{role.name}</SelectItem>
+                    {Object.values(RoleEnum).map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

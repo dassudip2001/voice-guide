@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 import User from "@/models/User";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+
 
 // GET /api/user
 export async function GET() {
@@ -39,7 +41,8 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
 
         const user = new User({
-            ...body
+            ...body,
+            password: bcrypt.hashSync(body.password, 10),
         });
 
         await user.save();

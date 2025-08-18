@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import User from "@/models/User";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 // GET /api/user/[id]
 export async function GET(
@@ -77,6 +78,10 @@ export async function PUT(
             return NextResponse.json({ error: "user not found" }, { status: 404 });
         }
        const body = await req.json();
+       if(body.password){
+        body.password = bcrypt.hashSync(body.password, 10);
+       }
+       
        await User.findOneAndUpdate({ _id: id }, { $set: body }, { new: true });
        return NextResponse.json({ message: "user updated successfully" }, { status: 200 });
     } catch (error) {
