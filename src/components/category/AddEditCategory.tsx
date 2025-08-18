@@ -17,22 +17,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { IReadCategory, IWriteCategory } from "@/schema/categorySchema";
 import axios from "axios";
 import { toast } from "sonner";
+import { ModalAction } from "@/types/generic";
 
-export enum CategoryAction {
-  ADD = "Add",
-  EDIT = "Edit",
-}
+
 
 export function AddEditCategory({
   isOpenCategory,
   setIsOpenCategory,
-  action = CategoryAction.ADD,
+  action = ModalAction.ADD,
   category,
   onReload
 }: {
   isOpenCategory: boolean;
   setIsOpenCategory: (isOpen: boolean) => void;
-  action?: CategoryAction;
+  action?: ModalAction;
   category?: IReadCategory
   onReload?: () => void;
 }) {
@@ -46,7 +44,7 @@ export function AddEditCategory({
 
 
   useEffect(() => {
-    if (action === CategoryAction.EDIT && category) {
+    if (action === ModalAction.EDIT && category) {
       reset({
         name: category.name,
         description: category.description || "",
@@ -59,7 +57,7 @@ export function AddEditCategory({
   const onSubmit: SubmitHandler<IWriteCategory> = async (data) => {
     setLoading(true);
     try {
-      if (action === CategoryAction.EDIT && category?._id) {
+      if (action === ModalAction.EDIT && category?._id) {
         await axios.put(`/api/category/${category._id}`, data);
         toast.success("Category updated successfully!");
       } else {

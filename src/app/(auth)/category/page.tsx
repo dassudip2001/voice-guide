@@ -14,13 +14,13 @@ import { RoleEnum } from "@/schema/userSchema";
 import { useEffect, useState } from "react";
 import {
   AddEditCategory,
-  CategoryAction,
 } from "@/components/category/AddEditCategory";
 import { toast } from "sonner";
 import { IReadCategory } from "@/schema/categorySchema";
 import axios from "axios";
 import Loading from "@/components/common/loading";
 import DeleteModel from "@/components/common/DeleteModel";
+import { ModalAction } from "@/types/generic";
 
 export default function Category() {
   const { data: session } = useSession();
@@ -28,7 +28,7 @@ export default function Category() {
   const [loading, setLoading] = useState<boolean>(false);
   const [category, setCategories] = useState<IReadCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<IReadCategory | null>(null);
-  const [action, setAction] = useState<CategoryAction>(CategoryAction.ADD);
+  const [action, setAction] = useState<ModalAction>(ModalAction.ADD);
   const [reloadCategory, setIsReloadCategory] = useState<boolean>(true);
   const [selectCategoryId, setSelectcategoryId] = useState<string | null>(null);
   const [isOpenDeleteCategoryModel, setIsOpenCategoryModel] = useState<boolean>(false)
@@ -68,7 +68,7 @@ export default function Category() {
           {session?.user?.role === RoleEnum.superadmin && (
             <Button onClick={() => {
               setSelectedCategory(null); // reset
-              setAction(CategoryAction.ADD);
+              setAction(ModalAction.ADD);
               setIsOpenCategory(true)
             }
             }>Create New</Button>
@@ -96,7 +96,7 @@ export default function Category() {
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" onClick={() => {
                         setSelectedCategory(qr);
-                        setAction(CategoryAction.EDIT);
+                        setAction(ModalAction.EDIT);
                         setIsOpenCategory(true);
                       }}>
                         Edit
