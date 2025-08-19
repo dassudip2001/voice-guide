@@ -72,13 +72,13 @@ export default function QR() {
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">QR Codes</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Posts</h1>
           <p className="text-muted-foreground">
-            Manage and track your QR codes
+            Manage and track your posts
           </p>
         </div>
         {session?.user?.role === RoleEnum.superadmin && (
-          <Button onClick={() => navigation.push('/qr/add')}>Create New QR</Button>
+          <Button onClick={() => navigation.push('/posts/add')}>Create New</Button>
         )}
       </div>
       <CardContent>
