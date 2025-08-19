@@ -1,30 +1,29 @@
-"use client"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
+"use client";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react"
+import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { toast } from "sonner"
-export type LoginRequestT={
+import { toast } from "sonner";
+export type LoginRequestT = {
   email: string;
   password: string;
   redirect: boolean;
-}
+};
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-
-  const router=useRouter();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  }= useForm<LoginRequestT>();
+  } = useForm<LoginRequestT>();
   const [loading, setLoading] = useState(false);
 
   const onSubmit: SubmitHandler<LoginRequestT> = async (data) => {
@@ -48,8 +47,21 @@ export function LoginForm({
       }
     });
   };
+
+  if (errors.email || errors.password) {
+    toast.error(
+      "Please fill in all required fields." +
+        (errors.email ? " Email is required." : "") +
+        (errors.password ? " Password is required." : "")
+    );
+  }
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -59,7 +71,12 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" {...register("email",{required:true})} />
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            {...register("email", { required: true })}
+          />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -71,7 +88,12 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" placeholder="•••••" {...register("password",{required:true})} />
+          <Input
+            id="password"
+            type="password"
+            placeholder="•••••"
+            {...register("password", { required: true })}
+          />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           Login
@@ -81,14 +103,11 @@ export function LoginForm({
             Or continue with
           </span>
         </div>
-        
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <p className="underline underline-offset-4">
-          Contact sudip@gmail.com
-        </p>
+        <p className="underline underline-offset-4">Contact sudip@gmail.com</p>
       </div>
     </form>
-  )
+  );
 }

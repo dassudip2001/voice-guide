@@ -36,7 +36,7 @@ const data = {
       url: "/dashboard",
       icon: Frame,
     },{
-      name: "category",
+      name: "Category",
       url: "/category",
       icon: Settings,
     },
