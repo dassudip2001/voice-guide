@@ -1,13 +1,16 @@
-
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { IReadPost } from "@/schema/postSchema";
-import { IReadCategory } from "@/schema/categorySchema";
-import { IArtistReadFormSchema } from "@/schema/ArtistSchema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 
@@ -48,19 +51,19 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        setLoading(prev => ({ ...prev, stats: true }));
-        
+        setLoading((prev) => ({ ...prev, stats: true }));
+
         // Fetch all data in parallel
         const [categoriesRes, artistsRes, postsRes] = await Promise.all([
-          fetch('/api/category'),
-          fetch('/api/artist'),
-          fetch('/api/posts')
+          fetch("/api/category"),
+          fetch("/api/artist"),
+          fetch("/api/posts"),
         ]);
 
         const [categories, artists, posts] = await Promise.all([
           categoriesRes.json(),
           artistsRes.json(),
-          postsRes.json()
+          postsRes.json(),
         ]);
 
         setStats({
@@ -70,12 +73,14 @@ export default function DashboardPage() {
         });
 
         // Filter draft posts (unpublished)
-        const unpublished = posts.data?.filter((post: IReadPost) => post.status === 'draft') || [];
+        const unpublished =
+          posts.data?.filter((post: IReadPost) => post.status === "draft") ||
+          [];
         setUnpublishedPosts(unpublished);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error("Error fetching dashboard data:", error);
       } finally {
-        setLoading(prev => ({ ...prev, stats: false, posts: false }));
+        setLoading((prev) => ({ ...prev, stats: false, posts: false }));
       }
     };
 
@@ -186,9 +191,11 @@ export default function DashboardPage() {
                 {unpublishedPosts.map((post) => (
                   <TableRow key={post._id}>
                     <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{post.category || 'N/A'}</TableCell>
+                    <TableCell>{post.category || "N/A"}</TableCell>
                     <TableCell>N/A</TableCell>
-                    <TableCell>{format(new Date(post.createdAt), 'MMM d, yyyy')}</TableCell>
+                    <TableCell>
+                      {format(new Date(post.createdAt), "MMM d, yyyy")}
+                    </TableCell>
                     <TableCell>
                       <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
                         Unpublished
@@ -201,7 +208,9 @@ export default function DashboardPage() {
           ) : (
             <div className="flex h-48 items-center justify-center rounded-md border border-dashed">
               <div className="text-center">
-                <p className="text-sm text-muted-foreground">No unpublished posts found</p>
+                <p className="text-sm text-muted-foreground">
+                  No unpublished posts found
+                </p>
               </div>
             </div>
           )}
