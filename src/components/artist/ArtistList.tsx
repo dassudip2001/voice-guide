@@ -18,6 +18,8 @@ import {
   TableRow,
 } from "../ui/table";
 import { ModalAction } from "@/types/generic";
+import AddEditArtist from "./AddEditArtist";
+import DeleteModel from "../common/DeleteModel";
 
 export default function ArtistList() {
   const [artists, setArtists] = useState<IArtistReadFormSchema[]>([]);
@@ -27,6 +29,10 @@ export default function ArtistList() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedArtist, setSelectedArtist] =
     useState<IArtistReadFormSchema | null>(null);
+  const [isReload, setIsReload] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<string | null>(null);
+  const [isOpenDeleteArtistModel, setIsOpenDeleteArtistModel] =
+    useState<boolean>(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -42,7 +48,7 @@ export default function ArtistList() {
       }
     }
     fetchData();
-  }, []);
+  }, [isReload]);
   if (loading) {
     return <Loading />;
   }
@@ -94,9 +100,9 @@ export default function ArtistList() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          // setSelectedCategory(us);
-                          // setAction(CategoryAction.EDIT);
-                          // setIsOpenCategory(true);
+                          setSelectedArtist(us);
+                          setAction(ModalAction.EDIT);
+                          setIsOpen(true);
                         }}
                       >
                         Edit
@@ -105,9 +111,9 @@ export default function ArtistList() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          // setSelectcategoryId(us?._id);
-                          // console.log(selectCategoryId);
-                          // setIsOpenCategoryModel(true)
+                          setIsDelete(us._id!);
+                          setAction(ModalAction.DELETE);
+                          setIsOpenDeleteArtistModel(true);
                         }}
                       >
                         Delete
@@ -127,6 +133,24 @@ export default function ArtistList() {
           </Table>
         </CardContent>
       </div>
+      {isOpen && (
+        <AddEditArtist
+          isOpenArtist={isOpen}
+          setIsOpenArtist={setIsOpen}
+          action={action}
+          onReload={() => setIsReload((prev) => !prev)}
+          artist={selectedArtist || undefined}
+        />
+      )}
+      {isDelete && (
+        <DeleteModel
+          isOpenDelete={isOpenDeleteArtistModel}
+          open={setIsOpenDeleteArtistModel}
+          recordId={isDelete}
+          onReload={() => setIsReload((prev) => !prev)}
+          modelName="Artist"
+        />
+      )}
     </>
   );
 }
