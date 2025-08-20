@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { IReadPost } from "@/schema/postSchema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { IReadPostResponse } from "@/types/post";
@@ -77,8 +76,9 @@ export default function DashboardPage() {
 
         // Filter draft posts (unpublished)
         const unpublished =
-          posts.data?.filter((post: IReadPost) => post.status === "draft") ||
-          [];
+          posts.data?.filter(
+            (post: IReadPostResponse) => post.status === "draft"
+          ) || [];
         setUnpublishedPosts(unpublished);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);

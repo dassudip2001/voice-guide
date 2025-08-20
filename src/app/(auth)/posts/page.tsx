@@ -13,12 +13,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { RoleEnum } from "@/schema/userSchema";
 import { useEffect, useState } from "react";
-import { IReadPost, PostStatus } from "@/schema/postSchema";
+import { PostStatus } from "@/schema/postSchema";
 import Loading from "@/components/common/loading";
 import { format } from "date-fns";
+import { IReadPostResponse } from "@/types/post";
 
 export default function QR() {
-  const [posts, setPosts] = useState<IReadPost[]>([]);
+  const [posts, setPosts] = useState<IReadPostResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -76,7 +77,9 @@ export default function QR() {
                 {/* <TableCell className="font-medium">{posts._id}</TableCell> */}
                 <TableCell>{posts.title}</TableCell>
                 <TableCell>
-                  <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"></span>
+                  <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                    {posts.category.name || "N/A"}
+                  </span>
                 </TableCell>
                 <TableCell className="max-w-[200px] truncate">
                   {posts.content}
