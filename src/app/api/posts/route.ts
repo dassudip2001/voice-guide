@@ -13,8 +13,8 @@ export async function GET() {
     }
     await connectToDatabase();
     const response = await Post.find({})
-      .populate("category")
-      .populate("artist")
+      // .populate("category")
+      // .populate("artist")
       .sort({
         createdAt: -1,
       });

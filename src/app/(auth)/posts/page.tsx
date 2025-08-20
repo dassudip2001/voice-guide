@@ -17,6 +17,7 @@ import { PostStatus } from "@/schema/postSchema";
 import Loading from "@/components/common/loading";
 import { format } from "date-fns";
 import { IReadPostResponse } from "@/types/post";
+import axios from "axios";
 
 export default function QR() {
   const [posts, setPosts] = useState<IReadPostResponse[]>([]);
@@ -25,9 +26,8 @@ export default function QR() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("/api/posts");
-        const data = await response.json();
-        setPosts(data.data);
+        const response = await axios.get("/api/posts");
+        setPosts(response.data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -50,12 +50,12 @@ export default function QR() {
           <h1 className="text-3xl font-bold tracking-tight">Posts</h1>
           <p className="text-muted-foreground">Manage and track your posts</p>
         </div>
-        {session?.user?.role === RoleEnum.superadmin ||
-          (session?.user?.role === RoleEnum.admin && (
+        {(session?.user?.role === RoleEnum.superadmin ||
+          session?.user?.role === RoleEnum.admin) && (
             <Button onClick={() => navigation.push("/posts/add")}>
               Create New
             </Button>
-          ))}
+          )}
       </div>
       <CardContent>
         <Table>
