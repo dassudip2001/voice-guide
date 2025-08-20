@@ -12,26 +12,27 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { RoleEnum } from "@/schema/userSchema";
 import { useEffect, useState } from "react";
-import {
-  AddEditCategory,
-} from "@/components/category/AddEditCategory";
+import { AddEditCategory } from "@/components/category/AddEditCategory";
 import { toast } from "sonner";
 import { IReadCategory } from "@/schema/categorySchema";
 import axios from "axios";
 import Loading from "@/components/common/loading";
 import DeleteModel from "@/components/common/DeleteModel";
 import { ModalAction } from "@/types/generic";
+import { format } from "date-fns";
 
 export default function Category() {
   const { data: session } = useSession();
   const [isOpenCategory, setIsOpenCategory] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [category, setCategories] = useState<IReadCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<IReadCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<IReadCategory | null>(null);
   const [action, setAction] = useState<ModalAction>(ModalAction.ADD);
   const [reloadCategory, setIsReloadCategory] = useState<boolean>(true);
   const [selectCategoryId, setSelectcategoryId] = useState<string | null>(null);
-  const [isOpenDeleteCategoryModel, setIsOpenCategoryModel] = useState<boolean>(false)
+  const [isOpenDeleteCategoryModel, setIsOpenCategoryModel] =
+    useState<boolean>(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -50,7 +51,7 @@ export default function Category() {
   }, [reloadCategory]);
 
   if (loading) {
-    <Loading />
+    <Loading />;
   }
 
   return (
@@ -66,12 +67,15 @@ export default function Category() {
           </div>
           {/* check if user is superadmin */}
           {session?.user?.role === RoleEnum.superadmin && (
-            <Button onClick={() => {
-              setSelectedCategory(null); // reset
-              setAction(ModalAction.ADD);
-              setIsOpenCategory(true)
-            }
-            }>Create New</Button>
+            <Button
+              onClick={() => {
+                setSelectedCategory(null); // reset
+                setAction(ModalAction.ADD);
+                setIsOpenCategory(true);
+              }}
+            >
+              Create New
+            </Button>
           )}
         </div>
         <CardContent>
@@ -85,27 +89,37 @@ export default function Category() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {category?.map((qr) => (
-                <TableRow key={qr._id}>
-                  {/* <TableCell className="font-medium">{qr._id}</TableCell> */}
-                  <TableCell>{qr.name}</TableCell>
-                  <TableCell>{qr.createdAt as unknown as string}</TableCell>
+              {category?.map((category) => (
+                <TableRow key={category._id}>
+                  {/* <TableCell className="font-medium">{category._id}</TableCell> */}
+                  <TableCell>{category.name}</TableCell>
+                  <TableCell>
+                    {format(new Date(category.createdAt), "MMM d, yyyy")}
+                  </TableCell>
 
                   <TableCell className="text-right">
                     {/* check if user is superadmin */}
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => {
-                        setSelectedCategory(qr);
-                        setAction(ModalAction.EDIT);
-                        setIsOpenCategory(true);
-                      }}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setAction(ModalAction.EDIT);
+                          setIsOpenCategory(true);
+                        }}
+                      >
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => {
-                        setSelectcategoryId(qr?._id);
-                        console.log(selectCategoryId);
-                        setIsOpenCategoryModel(true)
-                      }}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectcategoryId(category?._id);
+                          console.log(selectCategoryId);
+                          setIsOpenCategoryModel(true);
+                        }}
+                      >
                         Delete
                       </Button>
                     </div>
@@ -135,13 +149,14 @@ export default function Category() {
       )}
       {/* Delete model */}
       {isOpenDeleteCategoryModel && (
-        <DeleteModel recordId={selectCategoryId!} 
-        open={setIsOpenCategoryModel} 
-        isOpenDelete={isOpenDeleteCategoryModel}
-        onReload={() => setIsReloadCategory((prev) => !prev)}
-         modelName="Category" />
+        <DeleteModel
+          recordId={selectCategoryId!}
+          open={setIsOpenCategoryModel}
+          isOpenDelete={isOpenDeleteCategoryModel}
+          onReload={() => setIsReloadCategory((prev) => !prev)}
+          modelName="Category"
+        />
       )}
-
     </>
   );
 }

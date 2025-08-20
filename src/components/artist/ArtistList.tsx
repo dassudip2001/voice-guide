@@ -20,6 +20,7 @@ import {
 import { ModalAction } from "@/types/generic";
 import AddEditArtist from "./AddEditArtist";
 import DeleteModel from "../common/DeleteModel";
+import { format } from "date-fns";
 
 export default function ArtistList() {
   const [artists, setArtists] = useState<IArtistReadFormSchema[]>([]);
@@ -91,7 +92,7 @@ export default function ArtistList() {
                 <TableRow key={us._id}>
                   {/* <TableCell className="font-medium">{us._id}</TableCell> */}
                   <TableCell>{us.name}</TableCell>
-                  <TableCell>{us.createdAt as unknown as string}</TableCell>
+                  <TableCell>{format(us.createdAt, "MMM d, yyyy")}</TableCell>
 
                   <TableCell className="text-right">
                     {/* check if user is superadmin */}

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { IReadPost } from "@/schema/postSchema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { IReadPostResponse } from "@/types/post";
 
 type StatsCardProps = {
   title: string;
@@ -42,7 +43,9 @@ export default function DashboardPage() {
     totalArtists: 0,
     totalPosts: 0,
   });
-  const [unpublishedPosts, setUnpublishedPosts] = useState<IReadPost[]>([]);
+  const [unpublishedPosts, setUnpublishedPosts] = useState<IReadPostResponse[]>(
+    []
+  );
   const [loading, setLoading] = useState({
     stats: true,
     posts: true,
@@ -191,10 +194,8 @@ export default function DashboardPage() {
                 {unpublishedPosts.map((post) => (
                   <TableRow key={post._id}>
                     <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>
-                      {(post.category as unknown as string) || "N/A"}
-                    </TableCell>
-                    <TableCell>N/A</TableCell>
+                    <TableCell>{post.category.name || "N/A"}</TableCell>
+                    <TableCell>{post.artist.name || "N/A"}</TableCell>
                     <TableCell>
                       {format(new Date(post.createdAt), "MMM d, yyyy")}
                     </TableCell>

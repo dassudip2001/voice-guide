@@ -19,6 +19,10 @@ export const PostWriteFormSchema = z.object({
     z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
       message: "Invalid artist ObjectId",
     }),
+    z.object({
+      _id: z.string(),
+      name: z.string(),
+    }),
     z.instanceof(mongoose.Types.ObjectId),
   ]),
   status: z

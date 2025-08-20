@@ -15,6 +15,7 @@ import { RoleEnum } from "@/schema/userSchema";
 import { useEffect, useState } from "react";
 import { IReadPost, PostStatus } from "@/schema/postSchema";
 import Loading from "@/components/common/loading";
+import { format } from "date-fns";
 
 export default function QR() {
   const [posts, setPosts] = useState<IReadPost[]>([]);
@@ -69,29 +70,29 @@ export default function QR() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {posts.map((qr) => (
-              <TableRow key={qr._id}>
-                {/* <TableCell className="font-medium">{qr._id}</TableCell> */}
-                <TableCell>{qr.title}</TableCell>
+            {posts.map((posts) => (
+              <TableRow key={posts._id}>
+                {/* <TableCell className="font-medium">{posts._id}</TableCell> */}
+                <TableCell>{posts.title}</TableCell>
                 <TableCell>
-                  <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                    {(qr.category as unknown as string) || "N/A"}
-                  </span>
+                  <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"></span>
                 </TableCell>
                 <TableCell className="max-w-[200px] truncate">
-                  {qr.content}
+                  {posts.content}
                 </TableCell>
-                {/* <TableCell className="text-right">{qr.scans}</TableCell> */}
-                <TableCell>{qr.createdAt as unknown as string}</TableCell>
+                {/* <TableCell className="text-right">{posts.scans}</TableCell> */}
+                <TableCell>
+                  {format(new Date(posts.createdAt), "MMM d, yyyy")}
+                </TableCell>
                 <TableCell>
                   <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                      qr.status === PostStatus.published
+                      posts.status === PostStatus.published
                         ? "bg-green-50 text-green-700 ring-green-600/20"
                         : "bg-gray-50 text-gray-600 ring-gray-500/10"
                     }`}
                   >
-                    {qr.status}
+                    {posts.status}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
@@ -106,6 +107,13 @@ export default function QR() {
                 </TableCell>
               </TableRow>
             ))}
+            {posts.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

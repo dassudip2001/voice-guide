@@ -19,6 +19,7 @@ import Loading from "../common/loading";
 import { ModalAction } from "@/types/generic";
 import AddEditUser from "./AddEditUser";
 import DeleteModel from "../common/DeleteModel";
+import { format } from "date-fns";
 
 export default function UserList() {
   const [users, setUsers] = useState<IReadUser[]>([]);
@@ -92,7 +93,7 @@ export default function UserList() {
                   <TableCell>{us.name}</TableCell>
                   <TableCell>{us.email}</TableCell>
                   <TableCell>{us.role}</TableCell>
-                  <TableCell>{us.createdAt as unknown as string}</TableCell>
+                  <TableCell>{format(us.createdAt, "MMM d, yyyy")}</TableCell>
 
                   <TableCell className="text-right">
                     {/* check if user is superadmin */}
