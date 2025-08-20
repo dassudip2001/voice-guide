@@ -36,15 +36,16 @@ const data = {
       url: "/dashboard",
       icon: Frame,
     },{
+      name: "Post",
+      url: "/posts",
+      icon: Map,
+    }
+    ,{
       name: "Category",
       url: "/category",
       icon: Settings,
     },
-    {
-      name: "Post",
-      url: "/posts",
-      icon: Map,
-    },
+    
     {
       name: "Artist",
       url: "/artist",

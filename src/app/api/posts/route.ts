@@ -12,12 +12,41 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     await connectToDatabase();
-    const response = await Post.find({})
-      // .populate("category")
-      // .populate("artist")
-      .sort({
-        createdAt: -1,
-      });
+    const pipeline: any[] = [
+      {
+        $sort: { createdAt: -1 as const }
+      },
+      {
+        $lookup: {
+          from: 'categories', 
+          localField: 'category',
+          foreignField: '_id',
+          as: 'category'
+      }
+      },
+      {
+        $unwind: {
+          path: '$category',
+          preserveNullAndEmptyArrays: true
+      }
+      },
+      {
+        $lookup: {
+          from: 'artists',
+          localField: 'artist',
+          foreignField: '_id',
+          as: 'artist'
+      }
+      },
+      {
+        $unwind: {
+          path: '$artist',
+          preserveNullAndEmptyArrays: true
+      }
+      }
+    ];
+
+    const response = await Post.aggregate(pipeline);
     return NextResponse.json({ data: response }, { status: 200 });
   } catch (error) {
     console.log("Error in GET /api/posts:", error);
