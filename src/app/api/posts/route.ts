@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
 import Post from "@/models/Post";
@@ -14,36 +15,36 @@ export async function GET() {
     await connectToDatabase();
     const pipeline: any[] = [
       {
-        $sort: { createdAt: -1 as const }
+        $sort: { createdAt: -1 as const },
       },
       {
         $lookup: {
-          from: 'categories', 
-          localField: 'category',
-          foreignField: '_id',
-          as: 'category'
-      }
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
       },
       {
         $unwind: {
-          path: '$category',
-          preserveNullAndEmptyArrays: true
-      }
+          path: "$category",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $lookup: {
-          from: 'artists',
-          localField: 'artist',
-          foreignField: '_id',
-          as: 'artist'
-      }
+          from: "artists",
+          localField: "artist",
+          foreignField: "_id",
+          as: "artist",
+        },
       },
       {
         $unwind: {
-          path: '$artist',
-          preserveNullAndEmptyArrays: true
-      }
-      }
+          path: "$artist",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
     ];
 
     const response = await Post.aggregate(pipeline);
