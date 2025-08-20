@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { IReadPostResponse } from "@/types/post";
+import Published from "@/components/common/Published";
 
 type StatsCardProps = {
   title: string;
@@ -49,6 +50,10 @@ export default function DashboardPage() {
     stats: true,
     posts: true,
   });
+
+  const [openPublisheedPosts, setOpenPublishedPosts] = useState(false);
+  const [postId, setPostId] = useState<string | null>(null);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -88,7 +93,7 @@ export default function DashboardPage() {
     };
 
     fetchStats();
-  }, []);
+  }, [reload]);
 
   if (loading.stats) {
     return (
@@ -104,121 +109,140 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <StatsCard
-          title="Total Categories"
-          value={stats.totalCategories}
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          }
-        />
-        <StatsCard
-          title="Total Artists"
-          value={stats.totalArtists}
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          }
-        />
-        <StatsCard
-          title="Total Posts"
-          value={stats.totalPosts}
-          icon={
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              className="h-4 w-4"
-            >
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          }
-        />
-      </div>
+    <>
+      <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <StatsCard
+            title="Total Categories"
+            value={stats.totalCategories}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="h-4 w-4"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="Total Artists"
+            value={stats.totalArtists}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="h-4 w-4"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="Total Posts"
+            value={stats.totalPosts}
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="h-4 w-4"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            }
+          />
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Unpublished Posts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading.posts ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          ) : unpublishedPosts.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Artist</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {unpublishedPosts?.map((post) => (
-                  <TableRow key={post._id}>
-                    <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{post.category.name || "N/A"}</TableCell>
-                    <TableCell>{post.artist.name || "N/A"}</TableCell>
-                    <TableCell>
-                      {format(new Date(post.createdAt), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                        Unpublished
-                      </span>
-                    </TableCell>
-                  </TableRow>
+        <Card>
+          <CardHeader>
+            <CardTitle>Unpublished Posts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading.posts ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="flex h-48 items-center justify-center rounded-md border border-dashed">
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  No unpublished posts found
-                </p>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            ) : unpublishedPosts.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Artist</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {unpublishedPosts?.map((post) => (
+                    <TableRow
+                      key={post._id}
+                      onClick={() => {
+                        setOpenPublishedPosts(true);
+                        setPostId(post._id);
+                      }}
+                    >
+                      <TableCell className="font-medium">
+                        {post.title}
+                      </TableCell>
+                      <TableCell>{post.category.name || "N/A"}</TableCell>
+                      <TableCell>{post.artist.name || "N/A"}</TableCell>
+                      <TableCell>
+                        {format(new Date(post.createdAt), "MMM d, yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                          Unpublished
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="flex h-48 items-center justify-center rounded-md border border-dashed">
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">
+                    No unpublished posts found
+                  </p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      {/* published */}
+      {openPublisheedPosts && postId && (
+        <Published
+          open={openPublisheedPosts}
+          onOpenChange={setOpenPublishedPosts}
+          postId={postId}
+          reload={() => setReload(!reload)}
+        />
+      )}
+    </>
   );
 }
