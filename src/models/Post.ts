@@ -1,15 +1,15 @@
 import { IWritePost, PostStatus } from "@/schema/postSchema";
-import mongoose, { models,Schema } from "mongoose";
+import mongoose, { models, Schema } from "mongoose";
 
 const PostSchema = new mongoose.Schema<IWritePost>(
   {
     title: { type: String, required: true },
     content: { type: String, required: false },
-    category: { type: String, required: true },
+    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    artist: { type: Schema.Types.ObjectId, ref: "Artist", required: true },
     status: { type: String, enum: PostStatus, default: PostStatus.draft },
     imageUrl: { type: String, required: false },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
   },
   {
     timestamps: true,

@@ -191,7 +191,9 @@ export default function DashboardPage() {
                 {unpublishedPosts.map((post) => (
                   <TableRow key={post._id}>
                     <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{post.category || "N/A"}</TableCell>
+                    <TableCell>
+                      {(post.category as unknown as string) || "N/A"}
+                    </TableCell>
                     <TableCell>N/A</TableCell>
                     <TableCell>
                       {format(new Date(post.createdAt), "MMM d, yyyy")}
