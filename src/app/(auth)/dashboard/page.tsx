@@ -191,7 +191,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {unpublishedPosts.map((post) => (
+                {unpublishedPosts?.map((post) => (
                   <TableRow key={post._id}>
                     <TableCell className="font-medium">{post.title}</TableCell>
                     <TableCell>{post.category.name || "N/A"}</TableCell>

@@ -71,7 +71,7 @@ export default function QR() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {posts.map((posts) => (
+            {posts?.map((posts) => (
               <TableRow key={posts._id}>
                 {/* <TableCell className="font-medium">{posts._id}</TableCell> */}
                 <TableCell>{posts.title}</TableCell>
