@@ -65,17 +65,18 @@ export default function ArtistList() {
             </p>
           </div>
           {/* check if user is superadmin */}
-          {session?.user?.role === RoleEnum.superadmin && (
-            <Button
-              onClick={() => {
-                setSelectedArtist(null); // reset
-                setAction(ModalAction.ADD);
-                setIsOpen(true);
-              }}
-            >
-              Create New
-            </Button>
-          )}
+          {session?.user?.role === RoleEnum.superadmin ||
+            (session?.user?.role === RoleEnum.admin && (
+              <Button
+                onClick={() => {
+                  setSelectedArtist(null); // reset
+                  setAction(ModalAction.ADD);
+                  setIsOpen(true);
+                }}
+              >
+                Create New
+              </Button>
+            ))}
         </div>
         <CardContent>
           <Table>

@@ -49,11 +49,12 @@ export default function QR() {
           <h1 className="text-3xl font-bold tracking-tight">Posts</h1>
           <p className="text-muted-foreground">Manage and track your posts</p>
         </div>
-        {session?.user?.role === RoleEnum.superadmin && (
-          <Button onClick={() => navigation.push("/posts/add")}>
-            Create New
-          </Button>
-        )}
+        {session?.user?.role === RoleEnum.superadmin ||
+          (session?.user?.role === RoleEnum.admin && (
+            <Button onClick={() => navigation.push("/posts/add")}>
+              Create New
+            </Button>
+          ))}
       </div>
       <CardContent>
         <Table>
