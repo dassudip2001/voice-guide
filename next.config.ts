@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: false,
   },
+  images: {
+    domains: ["res.cloudinary.com"],
+  },
 };
 
 export default nextConfig;

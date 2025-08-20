@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { IReadPostResponse } from "@/types/post";
 import axios from "axios";
 import Published from "@/components/common/Published";
+import Image from "next/image";
 
 export default function QR() {
   const [posts, setPosts] = useState<IReadPostResponse[]>([]);
@@ -43,7 +44,7 @@ export default function QR() {
   const navigation = useRouter();
   const { data: session } = useSession();
 
-  if (loading) {
+  if (loading && posts.length === 0) {
     <Loading />;
   }
 
@@ -87,7 +88,23 @@ export default function QR() {
                       setPostId(posts._id);
                     }}
                   >
-                    {posts.title}
+                    <div
+                      role="row"
+                      className="flex items-center text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <Image
+                        className="w-10 h-10 rounded-full"
+                        src={posts.imageUrl || "/images/default.png"}
+                        width={40}
+                        height={40}
+                        alt="Jese image"
+                      />
+                      <div className="ps-3">
+                        <div className="text-base font-semibold">
+                          {posts.title}
+                        </div>
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
