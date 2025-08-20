@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { IReadPostResponse } from "@/types/post";
 import Published from "@/components/common/Published";
+import Image from "next/image";
 
 type StatsCardProps = {
   title: string;
@@ -206,7 +207,23 @@ export default function DashboardPage() {
                       }}
                     >
                       <TableCell className="font-medium">
-                        {post.title}
+                        <div
+                          role="row"
+                          className="flex items-center text-gray-900 whitespace-nowrap dark:text-white"
+                        >
+                          <Image
+                            className="w-10 h-10 rounded-full"
+                            src={post.imageUrl || "/images/default.png"}
+                            width={40}
+                            height={40}
+                            alt="Jese image"
+                          />
+                          <div className="ps-3">
+                            <div className="text-base font-semibold">
+                              {post.title}
+                            </div>
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell>{post.category.name || "N/A"}</TableCell>
                       <TableCell>{post.artist.name || "N/A"}</TableCell>

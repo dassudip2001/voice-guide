@@ -7,10 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
-  const postId = params.id;
-  console.log(`Publishing post with ID: ${postId}`);
+  const { id } = await props.params;
+  console.log(`Publishing post with ID: ${id}`);
   const session = await getServerSession(authOptions);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,12 +18,12 @@ export async function PUT(
   connectToDatabase();
 
   try {
-    const post = await Post.findById(postId);
+    const post = await Post.findById(id);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
     await Post.findOneAndUpdate(
-      { _id: postId },
+      { _id: id },
       { $set: { status: PostStatus.published } }
     );
     return NextResponse.json({ message: "Post published successfully" });
