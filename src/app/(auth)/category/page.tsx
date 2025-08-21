@@ -66,18 +66,18 @@ export default function Category() {
             </p>
           </div>
           {/* check if user is superadmin */}
-          {session?.user?.role === RoleEnum.superadmin ||
-            (session?.user?.role === RoleEnum.admin && (
-              <Button
-                onClick={() => {
-                  setSelectedCategory(null); // reset
-                  setAction(ModalAction.ADD);
-                  setIsOpenCategory(true);
-                }}
-              >
-                Create New
-              </Button>
-            ))}
+          {(session?.user?.role === RoleEnum.superadmin ||
+            session?.user?.role === RoleEnum.admin) && (
+            <Button
+              onClick={() => {
+                setSelectedCategory(null); // reset
+                setAction(ModalAction.ADD);
+                setIsOpenCategory(true);
+              }}
+            >
+              Create New
+            </Button>
+          )}
         </div>
         <CardContent>
           <Table>

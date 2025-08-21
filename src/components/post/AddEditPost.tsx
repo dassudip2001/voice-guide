@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { IWritePost, PostStatus } from "@/schema/postSchema";
@@ -28,16 +29,18 @@ import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { IArtistReadFormSchema } from "@/schema/ArtistSchema";
+import Image from "next/image";
 
 export default function AddEditPost() {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<IReadCategory[]>([]);
   const [artists, setArtists] = useState<IArtistReadFormSchema[]>([]); // Assuming artists are also categories
-  const [, setUploadedImageUrl] = useState<string | null>(null); // State for storing image URL
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null); // State for storing image URL
   const router = useRouter();
   const param = useParams();
 
   const PostId = param?.id;
+
   const {
     register,
     handleSubmit,
@@ -58,6 +61,52 @@ export default function AddEditPost() {
   const handleImageUploadComplete = (url: string) => {
     setUploadedImageUrl(url); // Store the uploaded image URL
     setValue("imageUrl", url); // Update the form value for `imagePath`
+  };
+  // Fetch categories on component mount
+  useEffect(() => {
+    // Fetch categories
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/category");
+        setCategories(response.data.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    // Fetch artists if needed
+    const fetchArtists = async () => {
+      try {
+        const response = await axios.get("/api/artist");
+        setArtists(response.data.data);
+      } catch (error) {
+        console.error("Error fetching artists:", error);
+      }
+    };
+    if (PostId) {
+      getPostsById(PostId as string);
+    }
+    fetchArtists();
+    fetchCategories();
+  }, []);
+
+  // Fetch post details if PostId is provided
+  const getPostsById = async (id: string) => {
+    try {
+      const response = await axios.get(`/api/posts/${id}`);
+      const postData = response.data.post;
+      console.log("Post data:", postData);
+
+      setValue("title", postData.title);
+      setValue("content", postData.content);
+      setValue("category", postData.category._id);
+      setValue("artist", postData.artist._id);
+      setValue("status", postData.status);
+      setValue("imageUrl", postData.imageUrl || ""); // Set image URL if available
+      setUploadedImageUrl(postData.imageUrl || ""); // Set uploaded image URL if available
+    } catch (error) {
+      console.error("Error fetching post by ID:", error);
+      toast.error("Failed to fetch post details. Please try again later.");
+    }
   };
 
   const onSubmit: SubmitHandler<IWritePost> = async (data) => {
@@ -87,27 +136,6 @@ export default function AddEditPost() {
     }
   };
 
-  // Fetch categories on component mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/api/category");
-        setCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    const fetchArtists = async () => {
-      try {
-        const response = await axios.get("/api/artist");
-        setArtists(response.data.data);
-      } catch (error) {
-        console.error("Error fetching artists:", error);
-      }
-    };
-    fetchArtists();
-    fetchCategories();
-  }, []);
   return (
     <>
       <div className="w-full p-6">
@@ -211,6 +239,7 @@ export default function AddEditPost() {
                         <div className="w-full">
                           <Select
                             onValueChange={field.onChange}
+                            value={field.value as string}
                             disabled={categories.length === 0}
                           >
                             <SelectTrigger
@@ -269,6 +298,7 @@ export default function AddEditPost() {
                         <div className="w-full">
                           <Select
                             onValueChange={field.onChange}
+                            value={field.value as string}
                             disabled={artists.length === 0}
                           >
                             <SelectTrigger
@@ -322,10 +352,17 @@ export default function AddEditPost() {
                         // reset((prev) => ({ ...prev, public_path: url }));
                       }}
                     />
-                    {/* <p className="text-xs text-muted-foreground">
-                      Upload a high-quality image to make your post more
-                      engaging. Recommended size: 1200x630px.
-                    </p> */}
+                    {uploadedImageUrl && (
+                      <div className="mt-4 flex justify-center">
+                        <Image
+                          src={uploadedImageUrl}
+                          alt="Uploaded Preview"
+                          width={100}
+                          height={100}
+                          className="rounded-lg border max-h-60 object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -20,6 +20,7 @@ import { IReadPostResponse } from "@/types/post";
 import axios from "axios";
 import Published from "@/components/common/Published";
 import Image from "next/image";
+import DeleteModel from "@/components/common/DeleteModel";
 
 export default function QR() {
   const [posts, setPosts] = useState<IReadPostResponse[]>([]);
@@ -27,6 +28,12 @@ export default function QR() {
   const [publishedPost, setPublishedPost] = useState<boolean>(false);
   const [postId, setPostId] = useState<string>("");
   const [reload, setReload] = useState<boolean>(false);
+  const [selectDeletePostId, setSelectDeletePostId] = useState<string | null>(
+    null
+  );
+  const [isOpenDeleteModel, setOpenDeleteModel] = useState<boolean>(false);
+  const navigation = useRouter();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -41,8 +48,6 @@ export default function QR() {
     };
     fetchPosts();
   }, [reload]);
-  const navigation = useRouter();
-  const { data: session } = useSession();
 
   if (loading && posts.length === 0) {
     <Loading />;
@@ -131,10 +136,23 @@ export default function QR() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigation.push(`/posts/${posts._id}`);
+                        }}
+                      >
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectDeletePostId(posts._id);
+                          setOpenDeleteModel(true);
+                        }}
+                      >
                         Delete
                       </Button>
                     </div>
@@ -159,6 +177,16 @@ export default function QR() {
           onOpenChange={setPublishedPost}
           postId={postId}
           reload={() => setReload(!reload)}
+        />
+      )}
+      {/* Delete Confirmation */}
+      {isOpenDeleteModel && (
+        <DeleteModel
+          recordId={selectDeletePostId!}
+          open={setOpenDeleteModel}
+          isOpenDelete={isOpenDeleteModel}
+          onReload={() => setReload(!reload)}
+          modelName="Post"
         />
       )}
     </>

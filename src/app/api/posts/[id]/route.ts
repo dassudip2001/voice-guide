@@ -16,7 +16,7 @@ export async function GET(
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const post = await Post.findOne({ _id: id });
+    const post = await Post.findOne({ _id: id }).populate("category artist");
     if (!post) {
       return NextResponse.json({ error: "post not found" }, { status: 404 });
     }
